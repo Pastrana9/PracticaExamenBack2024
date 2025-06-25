@@ -1,26 +1,23 @@
-import { MongoClient } from 'mongodb'
-import { ApolloServer } from '@apollo/server'
-import { startStandaloneServer } from '@apollo/server/standalone'
-import { typeDefs } from './typeDefs.ts'
-import { resolvers } from './resolvers.ts'
-import { ContactModel } from './type.ts'
+import { MongoClient } from "mongodb";
+import { ApolloServer } from "@apollo/server";
+import { startStandaloneServer } from "@apollo/server/standalone";
+import { typeDefs } from "./TypeDefs.ts";
+import { resolvers } from "./resolvers.ts";
+import { ContactModel } from "./type.ts";
 
-const MONGO_URL = Deno.env.get('MONGO_URL')
-if (!MONGO_URL) throw new Error('Error con MONGO_URL')
+const MONGO_URL = Deno.env.get("MONGO_URL");
+if (!MONGO_URL) throw new Error("Error con MONGO_URL");
 
-const client = new MongoClient(MONGO_URL)
-await client.connect()
-console.log('Conectado a MongoDB')
+const client = new MongoClient(MONGO_URL);
+await client.connect();
+console.log("Conectado a MongoDB");
 
-const db = client.db('agenda')
-const ContactCollection = db.collection<ContactModel>('contactos')
+const db = client.db("agenda");
+const ContactCollection = db.collection<ContactModel>("contact");
 
-/*  Índice único en el teléfono ✔️  */
-await ContactCollection.createIndex({ telefono: 1 }, { unique: true })
-
-const server = new ApolloServer({ typeDefs, resolvers })
+const server = new ApolloServer({ typeDefs, resolvers });
 const { url } = await startStandaloneServer(server, {
-  context: async () => ({ ContactCollection })
-})
+  context: async () => ({ ContactCollection }),
+});
 
-console.log(`🚀  Server ready at: ${url}`)
+console.log(`🚀  Server ready at: ${url}`);
